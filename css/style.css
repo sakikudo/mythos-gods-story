@@ -1,0 +1,332 @@
+/* ===========================
+   TOKENS
+=========================== */
+:root {
+  --bg:        #FAF5ED;
+  --bg-card:   #FFFDF8;
+  --ink:       #2C1810;
+  --ink-light: #6B5744;
+  --gold:      #C9A84C;
+  --gold-dim:  #8B7355;
+  --parchment: #EDE0C8;
+  --shadow:    rgba(44, 24, 16, 0.12);
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Noto Sans JP', sans-serif;
+
+  --card-w: 230px;
+  --radius:   6px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===========================
+   RESET & BASE
+=========================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+.site-header {
+  text-align: center;
+  padding: 64px 24px 40px;
+}
+
+.site-header::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+  margin: 16px auto 0;
+}
+
+.site-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.site-sub {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--ink-light);
+  margin-top: 8px;
+  font-weight: 300;
+}
+
+/* ===========================
+   SECTION
+=========================== */
+.cards-section {
+  position: relative;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 0 160px;
+}
+
+/* ===========================
+   TOGGLE BUTTON
+=========================== */
+.section-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 32px 32px;
+  position: sticky;
+  top: 20px;
+  z-index: 100;
+}
+
+.toggle-btn {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-light);
+  background: var(--bg-card);
+  border: 1px solid var(--parchment);
+  padding: 10px 20px;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: 0 2px 12px var(--shadow);
+  white-space: nowrap;
+}
+
+.toggle-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-dim);
+  box-shadow: 0 4px 20px var(--shadow);
+}
+
+/* ボタンラベルの出し分けは body クラスで制御 */
+body:not(.is-grid) .btn-label-grid  { display: none; }
+body.is-grid       .btn-label-curve { display: none; }
+
+/* ===========================
+   SVG CURVE PATH
+=========================== */
+.path-svg {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+  overflow: visible;
+}
+
+body.is-grid .path-svg {
+  opacity: 0;
+}
+
+/* ===========================
+   CARD-WRAP — CURVE LAYOUT
+=========================== */
+.card-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 2300px;
+  z-index: 1;
+}
+
+/* 各カードの配置（左右に大きく振る） */
+.card-wrap .card:nth-child(1) { --cx: 5%;  --cy:  60px; }
+.card-wrap .card:nth-child(2) { --cx: 62%; --cy: 320px; }
+.card-wrap .card:nth-child(3) { --cx: 8%;  --cy: 600px; }
+.card-wrap .card:nth-child(4) { --cx: 65%; --cy: 960px; }
+.card-wrap .card:nth-child(5) { --cx: 4%;  --cy: 1300px; }
+.card-wrap .card:nth-child(6) { --cx: 60%; --cy: 1620px; }
+
+/* 曲線モード：絶対配置 + 初期は非表示 */
+.card-wrap:not(.card-grid) .card {
+  position: absolute;
+  left: var(--cx);
+  top:  var(--cy);
+  width: var(--card-w);
+  opacity: 0;
+  transform: translateY(24px) scale(0.97);
+  transition:
+    opacity  0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+}
+
+/* .fadein が付いたら表示 */
+.card-wrap:not(.card-grid) .card.fadein {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ===========================
+   CARD-WRAP — GRID LAYOUT
+=========================== */
+.card-wrap.card-grid {
+  min-height: unset;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 32px;
+}
+
+.card-wrap.card-grid .card {
+  position: static;
+  width: 100%;
+  opacity: 1;
+  transform: none;
+  animation: gridIn 0.55s var(--ease-out-expo) both;
+}
+
+.card-wrap.card-grid .card:nth-child(1) { animation-delay: 0.00s; }
+.card-wrap.card-grid .card:nth-child(2) { animation-delay: 0.06s; }
+.card-wrap.card-grid .card:nth-child(3) { animation-delay: 0.12s; }
+.card-wrap.card-grid .card:nth-child(4) { animation-delay: 0.18s; }
+.card-wrap.card-grid .card:nth-child(5) { animation-delay: 0.24s; }
+.card-wrap.card-grid .card:nth-child(6) { animation-delay: 0.30s; }
+
+@keyframes gridIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ===========================
+   CARD
+=========================== */
+.card-inner {
+  background: var(--bg-card);
+  border: 1px solid var(--parchment);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition:
+    box-shadow   0.35s ease,
+    transform    0.35s var(--ease-out-expo),
+    border-color 0.35s ease;
+  cursor: default;
+}
+
+.card-inner:hover {
+  box-shadow: 0 8px 32px rgba(44,24,16,0.16), 0 0 0 1px var(--gold);
+  transform: translateY(-4px);
+  border-color: var(--gold);
+}
+
+.card-img {
+  height: 130px;
+  background: linear-gradient(160deg, var(--parchment) 0%, #D6C6A8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-img::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 18px,
+    rgba(139,115,85,0.07) 18px, rgba(139,115,85,0.07) 19px
+  );
+}
+
+.card-emblem {
+  font-size: 2.6rem;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(44,24,16,0.2));
+  line-height: 1;
+}
+
+.card-body {
+  padding: 14px 16px 16px;
+}
+
+.card-greek {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.72rem;
+  color: var(--gold-dim);
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.card-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.card-role {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+
+.card-desc {
+  font-size: 0.68rem;
+  line-height: 1.65;
+  color: var(--ink-light);
+  font-weight: 300;
+}
+
+.card-wrap.card-grid .card-desc {
+  font-size: 0.72rem;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 600px) {
+  .card-wrap.card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 16px;
+  }
+  .card-wrap:not(.card-grid) .card {
+    width: 160px;
+  }
+}
+
+@media (max-width: 380px) {
+  .card-wrap.card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===========================
+   REDUCED MOTION
+=========================== */
+@media (prefers-reduced-motion: reduce) {
+  .card-wrap:not(.card-grid) .card,
+  .curve-path,
+  .card-inner {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

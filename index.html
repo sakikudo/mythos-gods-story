@@ -1,11 +1,135 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="../css/style.css"/>
-    <script src="../js/main.js"></script>
-  </head>
-  <body>hello</body>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オリンポスの神々</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <h1 class="site-title">Olympians</h1>
+    <p class="site-sub">オリンポス十二神</p>
+  </header>
+
+  <section class="cards-section">
+
+    <div class="section-controls">
+      <button class="toggle-btn" id="toggleBtn">
+        <span class="btn-label-curve">⬡ 曲線レイアウト</span>
+        <span class="btn-label-grid">⊞ グリッドレイアウト</span>
+      </button>
+    </div>
+
+    <!-- SVG曲線 -->
+    <svg class="path-svg" viewBox="0 0 1080 2200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stop-color="#C9A84C" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#8B7355" stop-opacity="0.3"/>
+        </linearGradient>
+      </defs>
+      <path
+        class="curve-path"
+        id="curvePath"
+        d="M 100 0
+           C -100 150, 1180 250, 980 420
+           C 820 560, -80 660, -60 840
+           C -40 1020, 1160 1060, 1020 1200
+           C 900 1320, -100 1420, -80 1580
+           C -60 1740, 1100 1820, 980 1980
+           C 860 2120, 200 2160, 100 2200"
+        fill="none"
+        stroke="url(#goldGrad)"
+        stroke-width="1.5"
+        stroke-dasharray="4000"
+        stroke-dashoffset="4000"
+      />
+    </svg>
+
+    <!-- カードラッパー -->
+    <div class="card-wrap" id="cardWrap">
+
+      <div class="card" data-index="0">
+        <div class="card-inner">
+          <div class="card-img"><div class="card-emblem">⚡</div></div>
+          <div class="card-body">
+            <p class="card-greek">Ζεύς</p>
+            <h2 class="card-name">ゼウス</h2>
+            <p class="card-role">天空と雷霆の神</p>
+            <p class="card-desc">オリンポスの神々の王。天空・雷・正義・法・秩序を司る最高神。鷲と雷霆を象徴とする。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" data-index="1">
+        <div class="card-inner">
+          <div class="card-img"><div class="card-emblem">🦚</div></div>
+          <div class="card-body">
+            <p class="card-greek">Ἥρα</p>
+            <h2 class="card-name">ヘラ</h2>
+            <p class="card-role">結婚と女性の女神</p>
+            <p class="card-desc">ゼウスの妻にして姉。結婚・出産・女性を守護する女王。孔雀と牝牛を象徴とする。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" data-index="2">
+        <div class="card-inner">
+          <div class="card-img"><div class="card-emblem">🔱</div></div>
+          <div class="card-body">
+            <p class="card-greek">Ποσειδῶν</p>
+            <h2 class="card-name">ポセイドン</h2>
+            <p class="card-role">海と地震の神</p>
+            <p class="card-desc">ゼウスの兄。海・川・嵐・地震・馬を支配する。三叉槍トリアイナを象徴とする。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" data-index="3">
+        <div class="card-inner">
+          <div class="card-img"><div class="card-emblem">🌾</div></div>
+          <div class="card-body">
+            <p class="card-greek">Δήμητρα</p>
+            <h2 class="card-name">デメテル</h2>
+            <p class="card-role">大地と豊穣の女神</p>
+            <p class="card-desc">ゼウスの姉。穀物・農業・収穫・季節の循環を司る。麦穂と松明を象徴とする。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" data-index="4">
+        <div class="card-inner">
+          <div class="card-img"><div class="card-emblem">🦉</div></div>
+          <div class="card-body">
+            <p class="card-greek">Ἀθήνα</p>
+            <h2 class="card-name">アテナ</h2>
+            <p class="card-role">知恵と戦略の女神</p>
+            <p class="card-desc">ゼウスの頭から生まれた女神。知恵・工芸・戦略的戦争・正義を司る。梟と槍を象徴とする。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" data-index="5">
+        <div class="card-inner">
+          <div class="card-img"><div class="card-emblem">🏹</div></div>
+          <div class="card-body">
+            <p class="card-greek">Ἀπόλλων</p>
+            <h2 class="card-name">アポロン</h2>
+            <p class="card-role">太陽と芸術の神</p>
+            <p class="card-desc">ゼウスとレトの息子。太陽・音楽・詩・芸術・予言・弓術・真実を司る。竪琴と月桂樹を象徴とする。</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.card-wrap -->
+
+  </section>
+
+  <script src="main.js"></script>
+</body>
 </html>
