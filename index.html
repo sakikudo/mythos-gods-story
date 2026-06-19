@@ -5,38 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mythos - Greek Mythology</title>
   
-  <!-- Google Fonts: セリフ体（見出し・英字用）と明朝体（日本語用）を読み込み、エレガントな雰囲気を演出 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Noto+Serif+JP:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Opti:wght@400;500;700&family=Zen+Kaku+Gothic+Antique:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css"/>
-  <script src="./js/main.js"></script>
-
+  
+  <script src="./js/main.js" defer></script>
 </head>
 <body>
+  
+  <div class="loading-veil" id="loadingVeil">
+    <p class="loading-text">これは神々の物語。</p>
+  </div>
 
-  <!-- Header -->
-  <header class="navbar">
+  <header class="navbar" id="navbar">
     <a href="#" class="nav-brand">Mythos</a>
     <nav class="nav-links">
-      <a href="#">History</a>
-      <a href="#">Story</a>
-      <a href="#">Gods</a>
-      <a href="#">Map</a>
+      <a href="#" class="nav-item"><span>Mythos</span></a>
+      <div class="nav-separator"></div>
+      <a href="#" class="nav-item"><span>Character</span></a>
+      <div class="nav-separator"></div>
+      <a href="#" class="nav-item"><span>Family tree</span></a>
+      <div class="nav-separator"></div>
+      <a href="#" class="nav-item"><span>Story</span></a>
     </nav>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero-main">
     <h1 class="hero-title">Mythos</h1>
-    <h2 class="hero-subtitle">Greek Mythology</h2>
+  </section>
+
+  <section class="hero-intro">
+    <h2 class="hero-subtitle">Greek<br><span class="indent">Mythology</span></h2>
     <p class="hero-text">
-      ギリシア神話は古代ギリシャにて語り継がれてきた<br>神々と英雄たちの物語。<br>
-      神々は人間のように喜怒哀楽の感情をあらわにし<br>神と人の子である英雄たちは様々な冒険譚を残した。
+      ギリシャ神話は古代ギリシャにて語り継がれてきた<br>
+      神々と英雄たちの物語。
+    </p>
+    <p class="hero-text-small">
+      神々は人間のようにたくさんの感情をあらわにし<br>
+      神と人の子である英雄たちは様々な冒険譚を残した。
     </p>
   </section>
 
-  <!-- Characters Section -->
+  <section class="hero-next">
+    <h1 class="hero-text-2">これは世界のはじまりから語られる、壮大な叙事詩。</h1>
+  </section>
+
   <section class="characters-section">
     <h2 class="section-title">Characters</h2>
     
@@ -47,7 +61,6 @@
       </button>
     </div>
 
-    <!-- SVG曲線 (色をゴールド系に変更) -->
     <svg class="path-svg" viewBox="0 0 1080 2400" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -67,108 +80,169 @@
         fill="none"
         stroke="url(#goldGrad)"
         stroke-width="1.5"
-        stroke-dasharray="4500"
-        stroke-dashoffset="4500"
       />
     </svg>
 
     <div class="card-wrap" id="cardWrap">
-      <!-- カード1: 添付いただいたゼウスの画像 -->
-      <div class="card" data-index="0">
-        <img src="./image/card-zeus.png" alt="ゼウス" class="card-image-full">
+      <div class="card">
+        <img src="image/card-zeus.png" alt="ゼウス" class="card-image-full">
       </div>
-
-      <!-- カード2: ヘラ（画像がない場合のプレースホルダーデザイン） -->
-      <div class="card" data-index="1">
-        <div class="card-inner-placeholder">
-          <div class="card-placeholder-img">🦚</div>
-          <div class="card-placeholder-body">
-            <h3 class="card-placeholder-name">ヘラ</h3>
-          </div>
-        </div>
+      
+      <div class="card">
+        <img src="image/card_poseidon.png" alt="ポセイドン" class="card-image-full">
       </div>
-
-      <!-- カード3: ポセイドン -->
-      <div class="card" data-index="2">
-        <div class="card-inner-placeholder">
-          <div class="card-placeholder-img">🔱</div>
-          <div class="card-placeholder-body">
-            <h3 class="card-placeholder-name">ポセイドン</h3>
-          </div>
-        </div>
+      
+      <div class="card">
+        <img src="image/card_hades.png" alt="ハデス" class="card-image-full">
       </div>
-
-      <!-- カード4: デメテル -->
-      <div class="card" data-index="3">
-        <div class="card-inner-placeholder">
-          <div class="card-placeholder-img">🌾</div>
-          <div class="card-placeholder-body">
-            <h3 class="card-placeholder-name">デメテル</h3>
-          </div>
-        </div>
+      
+      <div class="card">
+        <img src="image/card_hera.png" alt="ヘラ" class="card-image-full">
       </div>
-
-      <!-- カード5: アテナ -->
-      <div class="card" data-index="4">
-        <div class="card-inner-placeholder">
-          <div class="card-placeholder-img">🦉</div>
-          <div class="card-placeholder-body">
-            <h3 class="card-placeholder-name">アテナ</h3>
-          </div>
-        </div>
+      
+      <div class="card">
+        <img src="image/card-demetel.png" alt="デメテル" class="card-image-full">
       </div>
-
-      <!-- カード6: アポロン -->
-      <div class="card" data-index="5">
-        <div class="card-inner-placeholder">
-          <div class="card-placeholder-img">🏹</div>
-          <div class="card-placeholder-body">
-            <h3 class="card-placeholder-name">アポロン</h3>
-          </div>
-        </div>
+      
+      <div class="card">
+        <img src="image/card-hestia.png" alt="ヘスティア" class="card-image-full">
       </div>
     </div>
   </section>
 
-  <!-- Family Tree Section -->
   <section class="family-tree-section">
     <h2 class="section-title">Family tree</h2>
     <div class="tree-container">
-      <!-- 添付いただいた家系図の画像 -->
-      <img src="./image/Group 87.png" alt="ギリシャ神話の家系図">
+      <img src="./image/family-tree.png" alt="ギリシャ神話の家系図">
     </div>
   </section>
 
-  <!-- Story Section -->
-  <section class="story-section">
-    <h2 class="section-title">Story</h2>
-    <div class="paper-stack">
-      <div class="paper-content">
-        <h3 class="story-title">世界の創世</h3>
-        <p class="story-text">
-          初めにカオスがあった。<br>
-          次いで広胸のガイア(大地)、タルタロス(冥界)、<br>
-          そしてエロス(愛)の3柱の神が生まれた。<br>
-          ガイアはウラノス(天空)とポントス(海)を一人で生み、<br>
-          ウラノスと夫婦となった。<br>
-          二人の間には、一つ目の巨人「キュクロプス」や<br>
-          百手を持つ怪物「ヘカトンケイル」、<br>
-          そしてティタンと呼ばれる12柱の神々が生まれた。
-        </p>
-      </div>
-    </div>
-  </section>
+<section class="story-section">
+    <div class="story-scroll-container">
+      <div class="story-sticky-wrapper">
+        
+        <h2 class="section-title">Story</h2>
+        
+        <div class="story-controls">
+          <button class="story-tab active" data-index="0">世界</button>
+          <button class="story-tab" data-index="1">誕生</button>
+          <button class="story-tab" data-index="2">ゼウス</button>
+          <button class="story-tab" data-index="3">ポセイドン</button>
+          <button class="story-tab" data-index="4">ハデス</button>
+          <button class="story-tab" data-index="5">ヘラ</button>
+          <button class="story-tab" data-index="6">デメテル</button>
+          <button class="story-tab" data-index="7">ヘスティア</button>
+        </div>
 
-  <!-- Footer -->
+        <div class="story-card-stack">
+          
+          <div class="story-card active" data-story="0">
+            <div class="story-bg-image">
+              <img src="image/story-world.png" alt="世界の始まり">
+            </div>
+          </div>
+
+          <div class="story-card" data-story="1">
+            <div class="story-bg-image">
+              <img src="image/story-birth.png" alt="誕生">
+            </div>
+          </div>
+
+          <div class="story-card" data-story="2">
+            <div class="story-bg-image">
+              <img src="image/story-zeus.png" alt="ゼウス">
+            </div>
+          </div>
+
+          <div class="story-card" data-story="3">
+            <div class="story-bg-image">
+              <img src="image/story-poseidon.png" alt="ポセイドン">
+            </div>
+          </div>
+
+          <div class="story-card" data-story="4">
+            <div class="story-bg-image">
+              <img src="image/story-hades.png" alt="ハデス">
+            </div>
+          </div>
+
+          <div class="story-card" data-story="5">
+            <div class="story-bg-image">
+              <img src="image/story-hera.png" alt="ヘラ">
+            </div>
+          </div>
+
+          <div class="story-card" data-story="6">
+            <div class="story-bg-image">
+              <img src="image/story-demetel.png" alt="デメテル">
+            </div>
+          </div>
+
+          <div class="story-card" data-story="7">
+            <div class="story-bg-image">
+              <img src="image/story-hestia.png" alt="ヘスティア">
+            </div>
+          </div>
+
+        </div> </div> </div> </section>
+
   <footer class="footer">
     <a href="#" class="footer-brand">Mythos</a>
     <div class="footer-links">
       <a href="#">History</a>
-      <a href="#">Family tree</a>
       <a href="#">Characters</a>
+      <a href="#">Family tree</a>
       <a href="#">Story</a>
     </div>
   </footer>
+
+  <div class="modal-layer" id="charModal">
+    <div class="modal-close-overlay" id="modalCloseOverlay"></div>
+    
+    <div class="modal-window">
+      <button class="modal-close-btn" id="modalCloseBtn">✕</button>
+      
+      <div class="modal-bg-graphic" id="modalBgGraphic"></div>
+
+      <div class="modal-content">
+        <div class="modal-text-zone">
+          <div class="modal-header-zone">
+            <h2 class="modal-name-ja" id="modalNameJa">ゼウス</h2>
+          </div>
+
+          <div class="modal-meta-zone">
+            <p class="modal-meta-item">領域：<span id="modalPower">空</span></p>
+            <p class="modal-meta-item">象徴：<span id="modalSymbol">雷・鷲</span></p>
+          </div>
+
+          <div class="modal-description-zone">
+            <p id="modalDesc">
+              兄弟を父親の腹から助け出したことで最高神となった。<br>
+              ヘラの夫だが、様々な女性に一目ぼれをして関係を持つため、相手やその子供へヘラからの嫌がらせを受けている。
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-gallery-zone">
+          <a href="#" target="_blank" rel="noopener noreferrer" class="modal-thumb-link" id="modalLink1">
+            <div class="modal-thumb-box" id="modalThumb1">
+              <div class="modal-thumb-overlay">
+                <p class="modal-thumb-quote" id="modalQuote1">引用元テキスト</p>
+              </div>
+            </div>
+          </a>
+          
+          <a href="#" target="_blank" rel="noopener noreferrer" class="modal-thumb-link" id="modalLink2">
+            <div class="modal-thumb-box" id="modalThumb2">
+              <div class="modal-thumb-overlay">
+                <p class="modal-thumb-quote" id="modalQuote2">引用元テキスト</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

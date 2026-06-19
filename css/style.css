@@ -1,21 +1,22 @@
-
 /* ===========================
     TOKENS & VARIABLES
 =========================== */
 :root {
-  /* 色の定義 */
-  --color-bg-top: #dbe4d5;       /* ページ上部の淡いグリーン */
-  --color-bg-mid: #f7f9f6;       /* ページ中部の白っぽいグリーン */
-  --color-dark: #5b6468;         /* Family treeなどのダーク背景色 */
-  --color-gold: #c2a878;         /* アクセントのゴールド */
-  --color-gold-dim: #9b865f;     /* 少し暗めのゴールド */
-  --color-text-main: #333a3d;    /* メインテキスト色 */
-  --color-text-light: #7a858b;   /* サブテキスト色 */
-  --color-paper: #e8ede9;        /* Storyセクションの紙の色 */
+  /* 色の定義 (ご指定のカラーコードを適用) */
+  --color-bg-top: #EDF5F2;       /* メイン背景色（淡いグリーン） */
+  --color-bg-mid: #B8D2AF;       /* サブ背景色・グラデーション用（少し濃いグリーン） */
+  --color-dark: #6A767C;         /* ダーク背景色・ナビ等のメイン文字色 */
+  --color-gold: #CBBB7B;         /* アクセント（文字や装飾のゴールド） */
+  
+  /* 基本色から派生させた微調整カラー（影やホバー時に使用） */
+  --color-gold-dim: #b8a86a;     /* ゴールドを少し暗くした色 */
+  --color-text-main: #6A767C;    /* 本文の文字色 */
+  --color-text-light: #8fa0a8;   /* 補助テキスト（少し明るいグレー） */
+  --color-paper: #ffffff;        /* Storyセクションなどのカード背景色 */
   
   /* フォント */
-  --font-display: 'Cormorant Garamond', serif;
-  --font-body: 'Noto Serif JP', serif;
+  --font-display: 'Kaisei Opti', serif;
+  --font-body: 'Zen Kaku Gothic Antique', sans-serif;
   
   /* レイアウト・アニメーション */
   --card-w: 240px;
@@ -38,119 +39,347 @@ html {
 }
 
 body {
-  background: linear-gradient(to bottom, var(--color-bg-top) 0%, var(--color-bg-mid) 15%, var(--color-bg-mid) 100%);
+  /* ▼ 修正点：グラデーションの色の配置を逆にし、大部分を薄い背景色に設定 */
+  background: linear-gradient(
+    to bottom, 
+    var(--color-bg-top) 100%   /* そこから下のメイン背景はすべて薄いグリーン */
+  );
   color: var(--color-text-main);
   font-family: var(--font-body);
   min-height: 100vh;
-  /* Windowsでの横スクロールバー対策 */
   overflow-x: hidden;
   width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+/* ===========================
+    LOADING SCREEN
+=========================== */
+.loading-veil {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: visibility 0s 1.2s; 
+}
+
+/* 幕が開いた状態 */
+.loading-veil.is-lifted {
+  visibility: hidden;
+}
+
+/* 幕の初期状態（後ろが全く見えない） */
+.loading-veil::before,
+.loading-veil::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100vh;
+  
+  /* 最初は背景色で完全に塗りつぶす */
+  background-color: var(--color-bg-top); 
+  backdrop-filter: blur(0px);
+  
+  /* 変化を滑らかにする */
+  transition: background-color 7s ease, backdrop-filter 2s ease, transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+  z-index: -1;
+}
+
+/* 文字が現れるタイミングで付与されるクラス（すりガラス化） */
+.loading-veil.is-blurring::before,
+.loading-veil.is-blurring::after {
+  /* ここで半透明かつぼかしを効かせる */
+  background-color: rgba(237, 245, 242, 0.6);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+/* 左半分のガラスを左端に配置 */
+.loading-veil::before {
+  left: 0;
+}
+
+/* 右半分のガラスを右端に配置 */
+.loading-veil::after {
+  right: 0;
+}
+
+/* ▼ 幕が開くときの動き（左は左へ、右は右へ100%スライド） */
+.loading-veil.is-lifted::before {
+  transform: translateX(-100%);
+}
+
+.loading-veil.is-lifted::after {
+  transform: translateX(100%);
+}
+
+/* 文字の見た目とアニメーション */
+.loading-text {
+  font-family: var(--font-display);
+  font-size: 7rem;
+  color: var(--color-dark);
+  letter-spacing: 0.15em;
+  
+  /* ▼ 最初から配置（中央）にはいるが、透明にしておく */
+  opacity: 0;
+}
+
+/* JSでクラスが付与されたら、表示してアニメーション開始 */
+.loading-text.is-playing {
+  opacity: 1;
+  animation: passThrough 2.2s ease-in forwards;
+}
+
+@keyframes passThrough {
+  0%   { opacity: 0; transform: scale(0.8); filter: blur(10px); }
+  10%  { opacity: 1; transform: scale(1); filter: blur(0); }
+  70%  { opacity: 1; transform: scale(1); filter: blur(0); }
+  100% { opacity: 0; transform: scale(15); filter: blur(40px); }
 }
 
 /* ===========================
     NAVIGATION
 =========================== */
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 6%;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 10;
+  display: flex;
+  justify-content: center; /* ▼ 修正点: メニュー全体を画面の中央に配置 */
+  align-items: center;
+  padding: 30px 6%;
+  z-index: 1000;
+  
+  /* 前回のグラデーション（上から濃い緑→薄い緑→透明）を維持 */
+  background: linear-gradient(
+    to bottom, 
+    rgba(184, 210, 175, 0.85) 0%, 
+    rgba(237, 245, 242, 0.5) 60%, 
+    rgba(237, 245, 242, 0) 100%
+  );
+  border-bottom: none;
+  
+  transition: padding 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+              background 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.navbar.is-scrolled {
+  padding: 15px 6%;
+  background: linear-gradient(
+    to bottom, 
+    rgba(184, 210, 175, 0.95) 0%, 
+    rgba(237, 245, 242, 0.7) 60%, 
+    rgba(237, 245, 242, 0) 100%
+  );
+  box-shadow: none; 
 }
 
 .nav-brand {
+  /* ▼ 修正点: メニューを中央にするため、ロゴは左端に「絶対配置」で固定 */
+  position: absolute;
+  left: 6%;
+  
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 3.2rem;
   color: var(--color-gold);
   text-decoration: none;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.nav-brand:hover {
+  transform: scale(1.03);
 }
 
 .nav-links {
   display: flex;
-  gap: 32px;
+  align-items: center;
+  gap: 20px; /* ボタンと線の間隔 */
 }
 
-.nav-links a {
+/* メニューのボタン（画像に合わせてデザイン変更） */
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* ▼ 修正点: 画像のように横幅を広くとる */
+  padding: 6px 90px; 
+  /* ▼ 修正点: 完全な丸（ピル型）ではなく、角の取れた四角形（角丸）にする */
+  border-radius: 8px; 
+  
   font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--color-text-main);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-dark);
   text-decoration: none;
-  letter-spacing: 0.1em;
-  transition: color 0.3s ease;
-  background: rgba(255,255,255,0.3);
-  padding: 6px 16px;
-  border-radius: 20px;
+  /* ▼ 修正点: 画像の枠のような、うっすら白い半透明の背景色 */
+  background: rgba(255, 255, 255, 0.45); 
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.nav-links a:hover {
-  color: var(--color-gold);
-  background: rgba(255,255,255,0.6);
+.nav-item span {
+  position: relative;
+  z-index: 2;
+  transition: color 0.4s ease;
+  /* ▼ 修正点: 画像のように文字と文字の間隔を少し開けて上品に */
+  letter-spacing: 0em; 
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--color-gold);
+  transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.nav-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(184, 210, 175, 0.4);
+}
+
+.nav-item:hover span {
+  color: #fff;
+}
+
+.nav-item:hover::before {
+  height: 100%;
+}
+
+/* ▼ 修正点: ボタン間の縦線を画像の比率に合わせる */
+.nav-separator {
+  width: 1px;
+  /* ボタンとほぼ同じ高さまで線を伸ばす */
+  height: 48px; 
+  /* 線の色を文字色と同じにし、透明度を下げて馴染ませる */
+  background-color: var(--color-dark);
+  opacity: 0.3; 
 }
 
 /* ===========================
     HERO SECTION
 =========================== */
-.hero {
-  text-align: center;
-  padding: 200px 24px 120px;
+.hero-main {
+  /* ▼ 修正点1: height: 100vh; を削除し、min-height に変更します */
+  min-height: 100vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 570px 6% 30vh;
+  text-align: center;
 }
 
-/* 背景の透かし地図風のあしらい（疑似要素で表現） */
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 15%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 60%;
-  background-image: radial-gradient(circle, rgba(194, 168, 120, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-  opacity: 0.5;
-  z-index: -1;
-  pointer-events: none;
-}
-
+/* タイトル：「Mythos」 画面幅に合わせて超巨大に */
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 10vw, 8rem);
+  font-size: clamp(6rem, 28vw, 25rem);
   font-weight: 400;
   color: var(--color-gold);
-  line-height: 1;
-  margin-bottom: 40px;
+  line-height: 0.85;
+  margin-bottom: 50px;
   letter-spacing: 0.02em;
 }
 
-.hero-subtitle {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  font-weight: 300;
-  color: var(--color-gold-dim);
-  margin-bottom: 32px;
-  letter-spacing: 0.05em;
+.hero-intro {
+  min-height: 100vh;
+  padding: 100px 10%;
+  position: relative;
+  background-image: url('../image/map.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;             
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
+.hero-intro::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.hero-subtitle,
 .hero-text {
-  max-width: 600px;
-  margin: 0 auto;
-  font-size: 0.95rem;
-  line-height: 2;
+  position: relative;
+  z-index: 1;
+}
+
+/* サブタイトル：「Greek Mythology」 */
+.hero-subtitle {
+  font-family: var(--font-display);
+  font-size: clamp(4.5rem, 5vw, 5.5rem);
+  font-weight: 300;
+  color: var(--color-gold-dim);
+  margin-bottom: 150px;
+  text-align: left; 
+  line-height: 1.5;  
+}
+
+.hero-subtitle .indent {
+  display: block;        
+  margin-left: 1em;    
+}
+
+/* 本文テキスト */
+.hero-text {
+  max-width: 1000px;
+  font-size: 1.7rem;
+  line-height: 1.5;
   color: var(--color-text-main);
+  margin-bottom: 150px;
+  letter-spacing: 0.03em;
+  margin-left: 72px;
+}
+
+.hero-text-small{
+  max-width: 1000px;
+  font-size: 1.7rem;
+  line-height: 2.2;
+  color: var(--color-text-main);
+  margin-bottom: 200px;
   letter-spacing: 0.08em;
+  margin-left: 72px;
+}
+
+.hero-next {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; 
+  padding: 50px 6% 10vh;
+  text-align: center;
+}
+
+.hero-text-2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 400;
+  color: var(--color-text-main);
+  line-height: 0.85;
+  margin-bottom: 200px;
+  letter-spacing: 0.02em;
 }
 
 /* ===========================
@@ -158,11 +387,11 @@ img {
 =========================== */
 .section-title {
   font-family: var(--font-display);
-  font-size: 2.8rem;
+  font-size: 4.5rem;
   font-weight: 300;
   color: var(--color-gold);
   text-align: left;
-  padding-left: 10%;
+  padding-left: 10%; 
   margin-bottom: 60px;
   letter-spacing: 0.05em;
 }
@@ -173,7 +402,7 @@ img {
 .characters-section {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%; 
   margin: 0 auto;
   padding: 80px 0 160px;
 }
@@ -214,7 +443,7 @@ body.is-grid .btn-label-curve { display: none; }
 /* SVG CURVE PATH */
 .path-svg {
   position: absolute;
-  top: 150px;
+  top: 230px;
   left: 0;
   width: 100%;
   height: auto;
@@ -229,47 +458,46 @@ body.is-grid .path-svg {
   opacity: 0;
 }
 
-/* CARD-WRAP — CURVE LAYOUT */
-.card-wrap {
-  position: relative;
-  width: 100%;
-  min-height: 2400px; /* 曲線をカバーする高さ */
-  z-index: 1;
-}
+/* ===========================
+    CHARACTERS SECTION (配置調整)
+=========================== */
+.card-wrap .card:nth-child(1) { --cx: 32%; --cy: 180px; }  /* 1: ゼウス */
+.card-wrap .card:nth-child(2) { --cx: 68%; --cy: 400px; }  /* 2: ポセイドン */
+.card-wrap .card:nth-child(3) { --cx: 46%; --cy: 880px; }  /* 3: ハデス */
+.card-wrap .card:nth-child(4) { --cx: 16%; --cy: 1250px; } /* 4: ヘラ */
+.card-wrap .card:nth-child(5) { --cx: 30%; --cy: 1820px; } /* 5: デメテル */
+.card-wrap .card:nth-child(6) { --cx: 70%; --cy: 1950px; } /* 6: ヘスティア */
 
-/* カードの配置座標（以前のコードを踏襲しつつ調整） */
-.card-wrap .card:nth-child(1) { --cx: 15%; --cy: 50px; }
-.card-wrap .card:nth-child(2) { --cx: 65%; --cy: 350px; }
-.card-wrap .card:nth-child(3) { --cx: 20%; --cy: 700px; }
-.card-wrap .card:nth-child(4) { --cx: 60%; --cy: 1050px; }
-.card-wrap .card:nth-child(5) { --cx: 15%; --cy: 1400px; }
-.card-wrap .card:nth-child(6) { --cx: 65%; --cy: 1750px; }
-
-/* 曲線モード初期状態 */
 .card-wrap:not(.card-grid) .card {
   position: absolute;
   left: var(--cx);
   top: var(--cy);
   width: var(--card-w);
+  transform: translate(-50%, 40px); 
   opacity: 0;
-  transform: translateY(40px);
   transition: opacity 0.8s var(--ease-smooth), transform 0.8s var(--ease-smooth);
   will-change: transform, opacity;
 }
 
-/* 画面内に入ったときの表示 */
 .card-wrap:not(.card-grid) .card.fadein {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
+}
+
+.card-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 2400px !important; 
+  z-index: 1;
 }
 
 /* CARD-WRAP — GRID LAYOUT */
 .card-wrap.card-grid {
-  min-height: unset;
+  min-height: unset !important;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 40px;
-  padding: 0 10%;
+  padding: 0 10% 250px; 
 }
 
 .card-wrap.card-grid .card {
@@ -303,14 +531,12 @@ body.is-grid .path-svg {
   filter: drop-shadow(0 15px 30px rgba(194, 168, 120, 0.3));
 }
 
-/* 添付画像を使うカード（ゼウス） */
 .card-image-full {
   width: 100%;
   border-radius: var(--radius);
   display: block;
 }
 
-/* 画像がないカードの代替プレースホルダー（既存コード風） */
 .card-inner-placeholder {
   background: #fff;
   border: 1px solid #e0e0e0;
@@ -344,10 +570,20 @@ body.is-grid .path-svg {
     FAMILY TREE SECTION
 =========================== */
 .family-tree-section {
-  background-color: var(--color-dark);
-  padding: 100px 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-bg-top) 0%,
+    rgba(106, 118, 124, 0.4) 2.5%, 
+    var(--color-dark) 5%,          
+    var(--color-dark) 95%,         
+    rgba(106, 118, 124, 0.4) 97.5%,
+    var(--color-bg-top) 100%
+  );
+  padding: 100px 0 100px 0; 
   text-align: center;
   position: relative;
+  width: 100%;
+  overflow: hidden; 
 }
 
 .family-tree-section .section-title {
@@ -358,90 +594,158 @@ body.is-grid .path-svg {
 }
 
 .tree-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 24px;
+  width: 100%;
+  max-width: 100%; 
+  padding: 0;      
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* 添付のファミリーツリー画像 */
 .tree-container img {
-  width: 100%;
+  width: 90%;
   height: auto;
-  /* 画像が白抜き文字などの場合、背景に馴染むよう調整 */
+  display: block; 
   mix-blend-mode: screen; 
 }
 
 /* ===========================
-    STORY SECTION
+    STORY SECTION (純粋・全画面グラフィックレイアウト)
 =========================== */
 .story-section {
-  padding: 120px 0 160px;
+  padding: 0; 
   position: relative;
+  width: 100%;
+}
+
+.story-scroll-container {
+  position: relative;
+  height: 450vh; 
+  margin-top: 0;
+}
+
+.story-sticky-wrapper {
+  position: sticky;
+  top: 0; 
+  height: 100vh; 
+  display: flex;
+  flex-direction: column; 
+  justify-content: flex-start; 
+  align-items: center;
   overflow: hidden;
+  padding-top: 60px; /* 💡 画像の縦スペースをさらに広げるため、上の余白を少し詰めました */
 }
 
-.story-section .section-title {
-  padding-left: 10%;
+.story-sticky-wrapper .section-title {
+  text-align: center;
+  padding-left: 0;
+  margin-bottom: 25px; /* 💡 見出し下の隙間を少しスマートに */
+  width: 100%;
 }
 
-.paper-stack {
+/* 1〜8の切り替えナビゲーション */
+.story-controls {
+  display: flex;
+  justify-content: center;
+  gap: 35px; 
+  margin-bottom: 35px; /* 💡 ボタンと画像の間隔を少しスマートに */
+  position: relative; 
+  z-index: 100;
+}
+
+.story-tab {
+  background: none;
+  border: none;
+  font-family: var(--font-display) !important;
+  font-size: 1.15rem;
+  color: var(--color-dark);
+  opacity: 0.4;
+  cursor: pointer;
+  padding: 5px 0;
   position: relative;
-  width: 80%;
-  max-width: 700px;
-  margin: 0 auto;
-  padding-top: 20px; /* 回転時の見切れ防止 */
+  transition: opacity 0.3s ease, color 0.3s ease;
 }
 
-/* 重なった紙の表現 */
-.paper-stack::before,
-.paper-stack::after {
+.story-tab.active {
+  opacity: 1;
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+.story-tab::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--color-paper);
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 4px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-  transition: transform 0.5s ease;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--color-gold);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+.story-tab.active::after {
+  transform: scaleX(1);
 }
 
-.paper-stack::before {
-  transform: rotate(-3deg) translate(-10px, 10px);
+/* ストーリー全体の表示サイズ（限界まで大型化） */
+.story-card-stack {
+  position: relative;
+  /* 💡 修正点①：横幅の最大制限を「960px」から「1100px」まで大胆に拡張 */
+  width: 95%; 
+  max-width: 1100px;
+  
+  /* 💡 修正点②：縦幅を「500px」から「580px」へ大幅にボリュームアップ！
+     上下のフッターや見出しとのバランスを崩さない限界の大きさに広げました */
+  height: 580px; 
+  
+  margin-bottom: 60px;
+}
+
+/* ストーリー本体 */
+.story-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0; 
+  overflow: hidden;
+  
+  transform: translateX(100vw) rotate(5deg);
+  opacity: 0;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.story-card.active {
+  transform: translateX(0) rotate(0deg);
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+.story-card.passed {
+  transform: translateX(-100vw) rotate(-5deg);
+  opacity: 0;
   z-index: 1;
 }
 
-.paper-stack::after {
-  transform: rotate(2deg) translate(15px, -5px);
-  z-index: 2;
+/* カード内の背景画像エリア */
+.story-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
-.paper-content {
-  position: relative;
-  z-index: 3;
-  background: #f0f3f1; /* 最前面の紙は少し明るく */
-  padding: 60px 80px;
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 4px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-.story-title {
-  font-family: var(--font-body);
-  font-size: 1.5rem;
-  color: var(--color-text-main);
-  margin-bottom: 32px;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid var(--color-gold);
-  display: inline-block;
-  padding-bottom: 8px;
-}
-
-.story-text {
-  font-size: 1rem;
-  line-height: 2.2;
-  color: var(--color-text-main);
-  letter-spacing: 0.08em;
+.story-bg-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  display: block;
 }
 
 /* ===========================
@@ -450,7 +754,7 @@ body.is-grid .path-svg {
 .footer {
   background-color: var(--color-dark);
   color: #fff;
-  padding: 60px 10%;
+  padding: 140px 10%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -459,7 +763,7 @@ body.is-grid .path-svg {
 
 .footer-brand {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: 4rem;
   color: var(--color-gold);
   text-decoration: none;
 }
@@ -487,18 +791,263 @@ body.is-grid .path-svg {
 =========================== */
 @media (max-width: 768px) {
   .navbar { padding: 20px; }
-  .nav-links { display: none; } /* モバイル時は簡易化のため非表示 */
+  .nav-links { display: none; } 
   .section-title { padding-left: 24px; font-size: 2.2rem; }
   .hero-title { font-size: 4rem; }
   .paper-content { padding: 40px 24px; }
   .footer { flex-direction: column; gap: 40px; text-align: center; }
   
   .card-wrap:not(.card-grid) .card {
-    /* モバイル時の曲線レイアウト座標調整 */
     left: 50% !important;
     transform: translateX(-50%) translateY(40px);
   }
   .card-wrap:not(.card-grid) .card.fadein {
     transform: translateX(-50%) translateY(0);
   }
+}
+
+/* ===========================
+    MODAL SYSTEM (Group 91仕様)
+=========================== */
+.modal-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 5000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--ease-smooth), visibility 0.4s var(--ease-smooth);
+}
+
+.modal-layer.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-close-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(40, 45, 50, 0.4);
+  cursor: pointer;
+}
+
+.modal-window {
+  position: relative;
+  width: 90%;
+  max-width: 640px;
+  height: 85vh;
+  max-height: 820px;
+  background-color: #F3F5F7; 
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15);
+  transform: scale(0.95) translateY(15px);
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 10;
+}
+
+.modal-layer.is-open .modal-window {
+  transform: scale(1) translateY(0);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  background: none;
+  border: none;
+  color: #6A767C;
+  font-size: 1.4rem;
+  cursor: pointer;
+  z-index: 100;
+  transition: color 0.3s;
+}
+.modal-close-btn:hover {
+  color: #222;
+}
+
+.modal-bg-graphic {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center 35%;
+  background-size: 90% auto;
+  opacity: 0.15; 
+  pointer-events: none;
+  z-index: 1;
+}
+
+.modal-bg-graphic.bg-zeus {
+  background-image: url('../image/modal-zeus.png') !important; 
+  background-size: contain; 
+  background-position: center center;
+  opacity: 0.15; 
+}
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 60px 45px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  overflow-y: auto;
+}
+
+.modal-text-zone {
+  position: relative;
+  z-index: 5;
+}
+
+.modal-header-zone {
+  margin-bottom: 25px;
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+}
+
+.modal-name-ja {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 400;
+  color: #222;
+  letter-spacing: 0.05em;
+}
+
+.modal-name-el {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: #888;
+}
+
+/* ===========================
+    MODAL META ZONE (ゲームステータス風フレーム)
+=========================== */
+.modal-meta-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 35px;
+  padding: 15px 20px;
+  background: rgba(180, 184, 187, 0.25); 
+  border: 1px solid rgba(106, 118, 124, 0.15);
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.modal-meta-item {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+
+.modal-meta-item strong {
+  display: inline-block;
+  min-width: 90px; 
+  padding: 3px 8px;
+  margin-right: 15px;
+  background-color: var(--color-dark); 
+  color: #EDF5F2; 
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.modal-meta-item span {
+  font-weight: 500;
+  color: #222;
+}
+
+.modal-description-zone {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #222;
+  letter-spacing: 0.03em;
+  margin-bottom: 40px;
+}
+
+/* ===========================
+    MODAL GALLERY (ホバー引用・リンク仕様)
+=========================== */
+.modal-gallery-zone {
+  margin-top: auto; 
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  padding-top: 20px;
+}
+
+.modal-thumb-link {
+  flex: 1;
+  text-decoration: none;
+  outline: none;
+}
+
+.modal-thumb-box {
+  width: 100%;
+  height: 200px;
+  background-color: #B4B8BB; 
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transition: transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth);
+}
+
+.modal-thumb-link:hover .modal-thumb-box {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+}
+
+.modal-thumb-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-thumb-link:hover .modal-thumb-overlay {
+  opacity: 1;
+}
+
+.modal-thumb-quote {
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-align: center;
+  letter-spacing: 0.03em;
+  font-family: var(--font-body);
+  transform: translateY(10px);
+  transition: transform 0.3s var(--ease-smooth);
+}
+
+.modal-thumb-link:hover .modal-thumb-quote {
+  transform: translateY(0);
 }
