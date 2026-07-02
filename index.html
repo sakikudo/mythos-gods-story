@@ -19,23 +19,26 @@
   </div>
 
   <header class="navbar" id="navbar">
-    <a href="#" class="nav-brand">Mythos</a>
+    <a href="#history" class="nav-brand">Mythos</a>
+    
+    <button class="mobile-menu-btn">MENU</button>
+
     <nav class="nav-links">
-      <a href="#" class="nav-item"><span>Mythos</span></a>
+      <a href="#history" class="nav-item"><span>History</span></a>
       <div class="nav-separator"></div>
-      <a href="#" class="nav-item"><span>Character</span></a>
+      <a href="#characters" class="nav-item"><span>Character</span></a>
       <div class="nav-separator"></div>
-      <a href="#" class="nav-item"><span>Family tree</span></a>
+      <a href="#family-tree" class="nav-item"><span>Family tree</span></a>
       <div class="nav-separator"></div>
-      <a href="#" class="nav-item"><span>Story</span></a>
+      <a href="#story" class="nav-item"><span>Story</span></a>
     </nav>
   </header>
 
-  <section class="hero-main">
+  <section class="hero-main" id="hero">
     <h1 class="hero-title">Mythos</h1>
   </section>
 
-  <section class="hero-intro">
+  <section class="hero-intro" id="history">
     <h2 class="hero-subtitle">Greek<br><span class="indent">Mythology</span></h2>
     <p class="hero-text">
       ギリシャ神話は古代ギリシャにて語り継がれてきた<br>
@@ -51,7 +54,7 @@
     <h1 class="hero-text-2">これは世界のはじまりから語られる、壮大な叙事詩。</h1>
   </section>
 
-  <section class="characters-section">
+  <section class="characters-section" id="characters">
     <h2 class="section-title">Characters</h2>
     
     <div class="section-controls">
@@ -110,14 +113,14 @@
     </div>
   </section>
 
-  <section class="family-tree-section">
+  <section class="family-tree-section" id="family-tree">
     <h2 class="section-title">Family tree</h2>
     <div class="tree-container">
       <img src="./image/family-tree.png" alt="ギリシャ神話の家系図">
     </div>
   </section>
 
-<section class="story-section">
+  <section class="story-section" id="story">
     <div class="story-scroll-container">
       <div class="story-sticky-wrapper">
         
@@ -187,12 +190,12 @@
         </div> </div> </div> </section>
 
   <footer class="footer">
-    <a href="#" class="footer-brand">Mythos</a>
+    <a href="#hero" class="footer-brand">Mythos</a>
     <div class="footer-links">
-      <a href="#">History</a>
-      <a href="#">Characters</a>
-      <a href="#">Family tree</a>
-      <a href="#">Story</a>
+      <a href="#history">History</a>
+      <a href="#characters">Characters</a>
+      <a href="#family-tree">Family tree</a>
+      <a href="#story">Story</a>
     </div>
   </footer>
 
